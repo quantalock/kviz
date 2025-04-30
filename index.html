@@ -2,98 +2,94 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kvíz: Vyhlídky Českého středohoří</title>
   <style>
     body { font-family: sans-serif; text-align: center; padding: 20px; }
-    #otazka, #vysledek, #kviz { display: none; }
-    img { max-width: 90%; height: auto; cursor: pointer; margin: 10px auto; border-radius: 10px; }
-    .btn { padding: 10px 20px; margin: 5px; font-size: 16px; cursor: pointer; }
-    .odpovedi button { display: block; margin: 10px auto; }
+    #foto { max-width: 90%; border-radius: 10px; cursor: pointer; }
+    .moznost { display: block; margin: 10px auto; padding: 10px 20px; font-size: 16px; }
   </style>
 </head>
 <body>
-
   <div id="uvod">
-    <h1>Vítej v kvízu o vyhlídkách Českého středohoří!</h1>
+    <h1>Vítej v kvízu o vyhlídkách Českého středohoří</h1>
     <p>Vyber si obtížnost:</p>
-    <button class="btn" onclick="startKviz(1)">1 – Dětská</button>
-    <button class="btn" onclick="startKviz(2)">2 – Lehká</button>
-    <button class="btn" onclick="startKviz(3)">3 – Středně těžká</button>
-    <button class="btn" onclick="startKviz(4)">4 – Těžká</button>
+    <button onclick="startKviz(1)">1 – dětská</button>
+    <button onclick="startKviz(2)">2 – lehká</button>
+    <button onclick="startKviz(3)">3 – středně těžká</button>
+    <button onclick="startKviz(4)">4 – těžká</button>
   </div>
 
-  <div id="kviz">
-    <p id="cisloOtazky"></p>
-    <p id="textOtazky"></p>
+  <div id="kviz" style="display:none;">
+    <h2 id="poradi"></h2>
+    <h3 id="otazkaText"></h3>
     <img id="foto" src="" alt="Vyhlídka" onclick="prepnoutFoto()">
-    <div class="odpovedi" id="odpovedi"></div>
+    <p style="font-size: 0.9em; color: #555;">Kliknutím na obrázek přepneš pohled: vyhlídka / výhled</p>
+    <div id="moznosti"></div>
   </div>
 
-  <div id="vysledek">
+  <div id="vysledek" style="display:none;">
     <h2>Výsledek</h2>
-    <p id="skore"></p>
-    <button class="btn" onclick="location.reload()">Zkusit znovu</button>
+    <p id="skoreText"></p>
+    <button onclick="location.reload()">Zkusit znovu</button>
   </div>
 
   <script src="otazky.js"></script>
   <script>
-    let aktualniIndex = 0;
     let vybraneOtazky = [];
+    let aktualni = 0;
     let body = 0;
-    let zobrazenaVyhlidka = true;
+    let aktualniFoto = 1;
 
-    function startKviz(uroven) {
+    function startKviz(obt) {
       document.getElementById("uvod").style.display = "none";
+      document.getElementById("kviz").style.display = "block";
 
-      let povoleneObtiznosti = [];
-      if (uroven === 1) povoleneObtiznosti = [1];
-      if (uroven === 2) povoleneObtiznosti = [1,2];
-      if (uroven === 3) povoleneObtiznosti = [2];
-      if (uroven === 4) povoleneObtiznosti = [2,3];
+      let vyber = otazky.filter(o => {
+        if (obt === 1) return o.obtiznost === 1;
+        if (obt === 2) return o.obtiznost <= 2;
+        if (obt === 3) return o.obtiznost === 2;
+        return o.obtiznost >= 2;
+      });
 
-      const vyber = otazky.filter(o => povoleneObtiznosti.includes(o.obtiznost));
       vybraneOtazky = vyber.sort(() => Math.random() - 0.5).slice(0, 10);
+      aktualni = 0;
       body = 0;
-      aktualniIndex = 0;
       zobrazOtazku();
     }
 
     function zobrazOtazku() {
-      if (aktualniIndex >= vybraneOtazky.length) {
-        document.getElementById("kviz").style.display = "none";
-        document.getElementById("vysledek").style.display = "block";
-        document.getElementById("skore").textContent = `Získal jsi ${body} z ${vybraneOtazky.length} bodů.`;
-        return;
-      }
+      const ot = vybraneOtazky[aktualni];
+      dokument.getElementById("poradi").innerText = `Otázka ${aktualni + 1} z ${vybraneOtazky.length}`;
+      document.getElementById("otazkaText").innerText = ot.otazka;
+      aktualniFoto = Math.random() < 0.5 ? 1 : 2;
+      document.getElementById("foto").src = `${String(ot.id).padStart(3, '0')}_${aktualniFoto}.jpg`;
 
-      const o = vybraneOtazky[aktualniIndex];
-      zobrazenaVyhlidka = true;
-      document.getElementById("kviz").style.display = "block";
-      document.getElementById("cisloOtazky").textContent = `Otázka ${aktualniIndex + 1} z ${vybraneOtazky.length}`;
-      document.getElementById("textOtazky").textContent = o.otazka;
-      document.getElementById("foto").src = `${String(o.id).padStart(3,'0')}_1.jpg`;
-
-      const odpDiv = document.getElementById("odpovedi");
-      odpDiv.innerHTML = "";
-      o.moznosti.forEach(odpoved => {
-        const btn = document.createElement("button");
-        btn.textContent = odpoved;
-        btn.className = "btn";
+      let m = document.getElementById("moznosti");
+      m.innerHTML = "";
+      ot.moznosti.forEach(moznost => {
+        let btn = document.createElement("button");
+        btn.className = "moznost";
+        btn.innerText = moznost;
         btn.onclick = () => {
-          if (odpoved === o.spravna) body++;
-          aktualniIndex++;
-          zobrazOtazku();
+          if (moznost === ot.spravna) body++;
+          aktualni++;
+          if (aktualni < vybraneOtazky.length) zobrazOtazku();
+          else zobrazVysledek();
         };
-        odpDiv.appendChild(btn);
+        m.appendChild(btn);
       });
     }
 
     function prepnoutFoto() {
-      const o = vybraneOtazky[aktualniIndex];
-      zobrazenaVyhlidka = !zobrazenaVyhlidka;
-      const cislo = zobrazenaVyhlidka ? 1 : 2;
-      document.getElementById("foto").src = `${String(o.id).padStart(3,'0')}_${cislo}.jpg`;
+      const ot = vybraneOtazky[aktualni];
+      aktualniFoto = aktualniFoto === 1 ? 2 : 1;
+      document.getElementById("foto").src = `${String(ot.id).padStart(3, '0')}_${aktualniFoto}.jpg`;
+    }
+
+    function zobrazVysledek() {
+      document.getElementById("kviz").style.display = "none";
+      document.getElementById("vysledek").style.display = "block";
+      document.getElementById("skoreText").innerText = `Získal jsi ${body} z ${vybraneOtazky.length} bodů.`;
     }
   </script>
 </body>
