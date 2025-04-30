@@ -59,7 +59,7 @@
 
     function zobrazOtazku() {
       const ot = vybraneOtazky[aktualni];
-      dokument.getElementById("poradi").innerText = `Otázka ${aktualni + 1} z ${vybraneOtazky.length}`;
+      document.getElementById("poradi").innerText = `Otázka ${aktualni + 1} z ${vybraneOtazky.length}`;
       document.getElementById("otazkaText").innerText = ot.otazka;
       aktualniFoto = Math.random() < 0.5 ? 1 : 2;
       document.getElementById("foto").src = `${String(ot.id).padStart(3, '0')}_${aktualniFoto}.jpg`;
