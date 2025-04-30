@@ -4,23 +4,60 @@
   <meta charset="UTF-8">
   <title>Kvíz: Vyhlídky Českého středohoří</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; background-color: #f9f9f9; }
-    #foto { max-width: 90%; border-radius: 10px; cursor: pointer; }
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    #foto {
+      max-width: 90%;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.5s;
+    }
     .moznost {
       display: block;
       margin: 10px auto;
       padding: 10px 20px;
       font-size: 16px;
+      max-width: 300px;
       background-color: #eee;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, transform 0.2s;
     }
-    .moznost:hover { background-color: #ddd; }
-    .skryty { display: none; }
-    footer { margin-top: 40px; font-size: 0.8em; color: #888; }
-</style>
+    .moznost:hover {
+      background-color: #ddd;
+      transform: scale(1.03);
+    }
+    .spravna {
+      background-color: #c6f6c6 !important;
+    }
+    .spatna {
+      background-color: #f6c6c6 !important;
+    }
+    .skryty {
+      display: none;
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 0.8em;
+      color: #888;
+    }
+    button[onclick^="startKviz"] {
+      margin: 5px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    button[onclick="startKviz(1)"] { background-color: #c8facc; }
+    button[onclick="startKviz(2)"] { background-color: #cce5ff; }
+    button[onclick="startKviz(3)"] { background-color: #ffe5b4; }
+    button[onclick="startKviz(4)"] { background-color: #ffcccc; }
+  </style>
 </head>
 <body>
   <div id="uvod">
@@ -77,7 +114,7 @@
 
     function zobrazOtazku() {
       const ot = vybraneOtazky[aktualni];
-      document.getElementById("poradi").innerText = `Otázka ${aktualni + 1} z ${vybraneOtazky.length}`;
+      document.getElementById("poradi").innerText = `Otázka ${aktualni + 1} z ${vybraneOtazky.length} — správně: ${body}`;
       document.getElementById("otazkaText").innerText = ot.otazka;
       aktualniFoto = Math.random() < 0.5 ? 1 : 2;
       document.getElementById("foto").src = `${String(ot.id).padStart(3, '0')}_${aktualniFoto}.jpg`;
@@ -92,9 +129,12 @@
   const spravne = moznost === ot.spravna;
   if (spravne) {
     body++;
-    btn.style.backgroundColor = '#c6f6c6'; // zelená
+    btn.classList.add("spravna");
   } else {
-    btn.style.backgroundColor = '#f6c6c6'; // červená
+    btn.classList.add("spatna");
+    Array.from(document.getElementsByClassName("moznost")).forEach(b => {
+      if (b.innerText === ot.spravna) b.classList.add("spravna");
+    });
   }
   Array.from(document.getElementsByClassName('moznost')).forEach(b => b.disabled = true);
   setTimeout(() => {
