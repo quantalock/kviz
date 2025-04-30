@@ -47,15 +47,16 @@
       color: #888;
     }
     button[onclick^="startKviz"] {
-  margin: 10px;
-  padding: 14px 24px;
-  border-radius: 8px;
+  margin: 10px auto;
+  padding: 18px 24px;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
-  font-size: 18px;
-  width: 80%;
-  max-width: 400px;
+  font-size: 22px;
+  width: 90%;
+  max-width: 500px;
   box-sizing: border-box;
+  display: block;
 }
     button[onclick="startKviz(1)"] { background-color: #c8facc; }
     button[onclick="startKviz(2)"] { background-color: #cce5ff; }
@@ -120,7 +121,7 @@
       const ot = vybraneOtazky[aktualni];
       document.getElementById("poradi").innerText = `Otázka ${aktualni + 1} z ${vybraneOtazky.length} — správně: ${body}`;
       document.getElementById("otazkaText").innerText = ot.otazka;
-      aktualniFoto = Math.random() < 0.5 ? 1 : 2;
+      aktualniFoto = 1;
       document.getElementById("foto").src = `${String(ot.id).padStart(3, '0')}_${aktualniFoto}.jpg`;
 
       let m = document.getElementById("moznosti");
