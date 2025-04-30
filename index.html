@@ -132,7 +132,14 @@
         if (obt === 4) return o.obtiznost === 3;
       });
 
-      vybraneOtazky = vyber.sort(() => Math.random() - 0.5).slice(0, 10);
+      
+      const seed = Date.now() % 100000;
+      vybraneOtazky = vyber
+      .sort(() => Math.random() - 0.5 + (seed % 10 - 5) / 100)
+      .slice(0, 10);
+      
+         
+      
       aktualni = 0;
       body = 0;
       zobrazOtazku();
