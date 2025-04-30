@@ -4,8 +4,8 @@ const otazky = [
     obtiznost: 3,
     nazev: "Mlynářův kámen",
     otazka: "Nad Moravanským potokem nedaleko Dubic je krásný výhled na údolí Labe z vyhlídky, která připomíná zašlé řemeslo.",
-    moznosti: ["Kovářský kámen", "Mlynářský kámen", "Uhelný kámen"],
-    spravna: "Mlynářský kámen"
+    moznosti: ["Kovářův kámen", "Mlynářův kámen", "Uhlířův kámen"],
+    spravna: "Mlynářův kámen"
   },
   {
     id: 2,
