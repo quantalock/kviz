@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kvíz: Vyhlídky Českého středohoří</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    #otazka, #vysledek, #kviz { display: none; }
+    img { max-width: 90%; height: auto; cursor: pointer; margin: 10px auto; border-radius: 10px; }
+    .btn { padding: 10px 20px; margin: 5px; font-size: 16px; cursor: pointer; }
+    .odpovedi button { display: block; margin: 10px auto; }
+  </style>
+</head>
+<body>
+
+  <div id="uvod">
+    <h1>Vítej v kvízu o vyhlídkách Českého středohoří!</h1>
+    <p>Vyber si obtížnost:</p>
+    <button class="btn" onclick="startKviz(1)">1 – Dětská</button>
+    <button class="btn" onclick="startKviz(2)">2 – Lehká</button>
+    <button class="btn" onclick="startKviz(3)">3 – Středně těžká</button>
+    <button class="btn" onclick="startKviz(4)">4 – Těžká</button>
+  </div>
+
+  <div id="kviz">
+    <p id="cisloOtazky"></p>
+    <p id="textOtazky"></p>
+    <img id="foto" src="" alt="Vyhlídka" onclick="prepnoutFoto()">
+    <div class="odpovedi" id="odpovedi"></div>
+  </div>
+
+  <div id="vysledek">
+    <h2>Výsledek</h2>
+    <p id="skore"></p>
+    <button class="btn" onclick="location.reload()">Zkusit znovu</button>
+  </div>
+
+  <script src="otazky.js"></script>
+  <script>
+    let aktualniIndex = 0;
+    let vybraneOtazky = [];
+    let body = 0;
+    let zobrazenaVyhlidka = true;
+
+    function startKviz(uroven) {
+      document.getElementById("uvod").style.display = "none";
+
+      let povoleneObtiznosti = [];
+      if (uroven === 1) povoleneObtiznosti = [1];
+      if (uroven === 2) povoleneObtiznosti = [1,2];
+      if (uroven === 3) povoleneObtiznosti = [2];
+      if (uroven === 4) povoleneObtiznosti = [2,3];
+
+      const vyber = otazky.filter(o => povoleneObtiznosti.includes(o.obtiznost));
+      vybraneOtazky = vyber.sort(() => Math.random() - 0.5).slice(0, 10);
+      body = 0;
+      aktualniIndex = 0;
+      zobrazOtazku();
+    }
+
+    function zobrazOtazku() {
+      if (aktualniIndex >= vybraneOtazky.length) {
+        document.getElementById("kviz").style.display = "none";
+        document.getElementById("vysledek").style.display = "block";
+        document.getElementById("skore").textContent = `Získal jsi ${body} z ${vybraneOtazky.length} bodů.`;
+        return;
+      }
+
+      const o = vybraneOtazky[aktualniIndex];
+      zobrazenaVyhlidka = true;
+      document.getElementById("kviz").style.display = "block";
+      document.getElementById("cisloOtazky").textContent = `Otázka ${aktualniIndex + 1} z ${vybraneOtazky.length}`;
+      document.getElementById("textOtazky").textContent = o.otazka;
+      document.getElementById("foto").src = `${String(o.id).padStart(3,'0')}_1.jpg`;
+
+      const odpDiv = document.getElementById("odpovedi");
+      odpDiv.innerHTML = "";
+      o.moznosti.forEach(odpoved => {
+        const btn = document.createElement("button");
+        btn.textContent = odpoved;
+        btn.className = "btn";
+        btn.onclick = () => {
+          if (odpoved === o.spravna) body++;
+          aktualniIndex++;
+          zobrazOtazku();
+        };
+        odpDiv.appendChild(btn);
+      });
+    }
+
+    function prepnoutFoto() {
+      const o = vybraneOtazky[aktualniIndex];
+      zobrazenaVyhlidka = !zobrazenaVyhlidka;
+      const cislo = zobrazenaVyhlidka ? 1 : 2;
+      document.getElementById("foto").src = `${String(o.id).padStart(3,'0')}_${cislo}.jpg`;
+    }
+  </script>
+</body>
+</html>
