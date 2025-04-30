@@ -4,14 +4,28 @@
   <meta charset="UTF-8">
   <title>Kvíz: Vyhlídky Českého středohoří</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    body { font-family: sans-serif; text-align: center; padding: 20px; background-color: #f9f9f9; }
     #foto { max-width: 90%; border-radius: 10px; cursor: pointer; }
-    .moznost { display: block; margin: 10px auto; padding: 10px 20px; font-size: 16px; }
-  </style>
+    .moznost {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #eee;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .moznost:hover { background-color: #ddd; }
+    .skryty { display: none; }
+    footer { margin-top: 40px; font-size: 0.8em; color: #888; }
+</style>
 </head>
 <body>
   <div id="uvod">
-    <h1>Vítej v kvízu o vyhlídkách Českého středohoří</h1>
+    <h1>Kvíz: Vyhlídky Českého středohoří</h1>
+    <p>Vítej! V tomto kvízu poznáš krásná místa našeho kraje.</p>
     <p>Vyber si obtížnost:</p>
     <button onclick="startKviz(1)">1 – dětská</button>
     <button onclick="startKviz(2)">2 – lehká</button>
@@ -19,7 +33,7 @@
     <button onclick="startKviz(4)">4 – těžká</button>
   </div>
 
-  <div id="kviz" style="display:none;">
+  <div id="kviz" class="skryty">
     <h2 id="poradi"></h2>
     <h3 id="otazkaText"></h3>
     <img id="foto" src="" alt="Vyhlídka" onclick="prepnoutFoto()">
@@ -27,11 +41,15 @@
     <div id="moznosti"></div>
   </div>
 
-  <div id="vysledek" style="display:none;">
+  <div id="vysledek" class="skryty">
     <h2>Výsledek</h2>
     <p id="skoreText"></p>
     <button onclick="location.reload()">Zkusit znovu</button>
   </div>
+
+  <footer>
+    &copy; 2025 Vyhlídky Českého středohoří — Vytvořeno pro radost
+  </footer>
 
   <script src="otazky.js"></script>
   <script>
@@ -41,17 +59,15 @@
     let aktualniFoto = 1;
 
     function startKviz(obt) {
-      document.getElementById("uvod").style.display = "none";
-      document.getElementById("kviz").style.display = "block";
+      document.getElementById("uvod").classList.add("skryty");
+      document.getElementById("kviz").classList.remove("skryty");
 
-let vyber = otazky.filter(o => {
-  if (obt === 1) return o.obtiznost === 1;
-  if (obt === 2) return o.obtiznost <= 2;
-  if (obt === 3) return o.obtiznost === 2 || o.obtiznost === 3;
-  if (obt === 4) return o.obtiznost === 3;
-});
-
-     
+      let vyber = otazky.filter(o => {
+        if (obt === 1) return o.obtiznost === 1;
+        if (obt === 2) return o.obtiznost <= 2;
+        if (obt === 3) return o.obtiznost === 2 || o.obtiznost === 3;
+        if (obt === 4) return o.obtiznost === 3;
+      });
 
       vybraneOtazky = vyber.sort(() => Math.random() - 0.5).slice(0, 10);
       aktualni = 0;
@@ -73,11 +89,20 @@ let vyber = otazky.filter(o => {
         btn.className = "moznost";
         btn.innerText = moznost;
         btn.onclick = () => {
-          if (moznost === ot.spravna) body++;
-          aktualni++;
-          if (aktualni < vybraneOtazky.length) zobrazOtazku();
-          else zobrazVysledek();
-        };
+  const spravne = moznost === ot.spravna;
+  if (spravne) {
+    body++;
+    btn.style.backgroundColor = '#c6f6c6'; // zelená
+  } else {
+    btn.style.backgroundColor = '#f6c6c6'; // červená
+  }
+  Array.from(document.getElementsByClassName('moznost')).forEach(b => b.disabled = true);
+  setTimeout(() => {
+    aktualni++;
+    if (aktualni < vybraneOtazky.length) zobrazOtazku();
+    else zobrazVysledek();
+  }, 2000);
+};
         m.appendChild(btn);
       });
     }
@@ -89,8 +114,8 @@ let vyber = otazky.filter(o => {
     }
 
     function zobrazVysledek() {
-      document.getElementById("kviz").style.display = "none";
-      document.getElementById("vysledek").style.display = "block";
+      document.getElementById("kviz").classList.add("skryty");
+      document.getElementById("vysledek").classList.remove("skryty");
       document.getElementById("skoreText").innerText = `Získal jsi ${body} z ${vybraneOtazky.length} bodů.`;
     }
   </script>
