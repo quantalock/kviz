@@ -44,12 +44,14 @@
       document.getElementById("uvod").style.display = "none";
       document.getElementById("kviz").style.display = "block";
 
-      let vyber = otazky.filter(o => {
-        if (obt === 1) return o.obtiznost === 1;
-        if (obt === 2) return o.obtiznost <= 2;
-        if (obt === 3) return o.obtiznost === 2;
-        return o.obtiznost >= 2;
-      });
+let vyber = otazky.filter(o => {
+  if (obt === 1) return o.obtiznost === 1;
+  if (obt === 2) return o.obtiznost <= 2;
+  if (obt === 3) return o.obtiznost === 2 || o.obtiznost === 3;
+  if (obt === 4) return o.obtiznost === 3;
+});
+
+     
 
       vybraneOtazky = vyber.sort(() => Math.random() - 0.5).slice(0, 10);
       aktualni = 0;
