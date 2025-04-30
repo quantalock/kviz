@@ -35,7 +35,7 @@ const otazky = [
     id: 5,
     obtiznost: 2,
     nazev: "Lovoš",
-    otazka: "Nad Lovosicemi se tyčí dvojvršek. Menší se jmenuje Kibička, na název většího se ptáme. Doshuje 570 m n.m. a je tu turistická chata.",
+    otazka: "Nad Lovosicemi se tyčí dvojvršek. Menší se jmenuje Kibička, na název většího se ptáme. Dosahuje 570 m n.m. a je tu turistická chata.",
     moznosti: ["Lovoš", "Ostrý", "Hradiště"],
     spravna: "Lovoš"
   },
